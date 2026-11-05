@@ -1,0 +1,312 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+aidl_interface {
+    name: "vendor.sprd.hardware.aprd",
+    srcs: ["vendor/sprd/hardware/aprd/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.cplog_svc",
+    srcs: ["vendor/sprd/hardware/cplog_svc/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.enhance",
+    srcs: ["vendor/sprd/hardware/enhance/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.fingerprintmmi",
+    srcs: ["vendor/sprd/hardware/fingerprintmmi/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.hdcp",
+    srcs: ["vendor/sprd/hardware/hdcp/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.ifaa",
+    srcs: ["vendor/sprd/hardware/ifaa/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.log",
+    srcs: ["vendor/sprd/hardware/log/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.network",
+    srcs: ["vendor/sprd/hardware/network/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.soter",
+    srcs: ["vendor/sprd/hardware/soter/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.trusty",
+    srcs: ["vendor/sprd/hardware/trusty/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.sprd.hardware.tui",
+    srcs: ["vendor/sprd/hardware/tui/*.aidl"],
+    stability: "vintf",
+    owner: "sprd",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.ai_engine",
+    srcs: ["vendor/unisoc/hardware/ai_engine/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.power",
+    srcs: ["vendor/unisoc/hardware/power/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio",
+    srcs: ["vendor/unisoc/hardware/radio/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.data",
+    srcs: ["vendor/unisoc/hardware/radio/data/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.ims",
+    srcs: ["vendor/unisoc/hardware/radio/ims/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.lite",
+    srcs: ["vendor/unisoc/hardware/radio/lite/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.messaging",
+    srcs: ["vendor/unisoc/hardware/radio/messaging/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.modem",
+    srcs: ["vendor/unisoc/hardware/radio/modem/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.network",
+    srcs: ["vendor/unisoc/hardware/radio/network/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.sim",
+    srcs: ["vendor/unisoc/hardware/radio/sim/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}
+
+aidl_interface {
+    name: "vendor.unisoc.hardware.radio.voice",
+    srcs: ["vendor/unisoc/hardware/radio/voice/*.aidl"],
+    stability: "vintf",
+    owner: "unisoc",
+    vendor_available: true,
+    product_available: true,
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
+}

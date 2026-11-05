@@ -1,0 +1,17 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+hidl_interface {
+    name: "vendor.sprd.hardware.trusty@1.0",
+    root: "vendor.sprd.hardware",
+    system_ext_specific: true,
+    srcs: [
+        "ITrustyClientProvider.hal",
+    ],
+    interfaces: [
+        "android.hidl.base@1.0",
+    ],
+    gen_java: true,
+}

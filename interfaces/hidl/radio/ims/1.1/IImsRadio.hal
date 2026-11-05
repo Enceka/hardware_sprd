@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package vendor.sprd.hardware.radio.ims@1.1;
+
+// Stub definition. The stock interface library exposes methods which are
+// not modelled here; exact signatures are only available in the vendor
+// interface source. See README.md and tools/dump_hal_api.sh.
+// Known method names: not recovered.
+interface IImsRadio {
+};
