@@ -1,0 +1,21 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+cc_binary {
+    name: "vendor.sprd.hardware.boot@1.2-service.stub",
+    defaults: ["hidl_defaults"],
+    init_rc: ["vendor.sprd.hardware.boot@1.2-service.stub.rc"],
+    vintf_fragments: ["vendor.sprd.hardware.boot@1.2-service.stub.xml"],
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: ["service.cpp"],
+    shared_libs: [
+        "libbase",
+        "libhidlbase",
+        "liblog",
+        "libutils",
+        "vendor.sprd.hardware.boot@1.2",
+    ],
+}

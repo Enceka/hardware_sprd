@@ -1,0 +1,4 @@
+service vendor.swfingerprint-stub /vendor/bin/hw/vendor.sw.swfingerprint@1.0-service.stub
+    class hal
+    user system
+    group system

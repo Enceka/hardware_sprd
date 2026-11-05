@@ -1,0 +1,20 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+cc_binary {
+    name: "vendor.unisoc.hardware-aidl-service.stub",
+    init_rc: ["vendor.unisoc.hardware-aidl-service.stub.rc"],
+    vintf_fragments: ["vendor.unisoc.hardware-aidl-service.stub.xml"],
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: ["service.cpp"],
+    shared_libs: [
+        "libbase",
+        "libbinder_ndk",
+        "liblog",
+        "vendor.unisoc.hardware.ai_engine-V1-ndk",
+        "vendor.unisoc.hardware.power-V1-ndk",
+    ],
+}
