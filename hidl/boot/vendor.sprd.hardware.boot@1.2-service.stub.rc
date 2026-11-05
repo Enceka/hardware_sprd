@@ -1,0 +1,4 @@
+service vendor.sprd.boot-hal-1-2 /vendor/bin/hw/vendor.sprd.hardware.boot@1.2-service.stub
+    class hal
+    user system
+    group system

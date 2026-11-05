@@ -1,0 +1,27 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+cc_binary {
+    name: "vendor.unisoc.hardware.radio-service.stub",
+    init_rc: ["vendor.unisoc.hardware.radio-service.stub.rc"],
+    vintf_fragments: ["vendor.unisoc.hardware.radio-service.stub.xml"],
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: ["service.cpp"],
+    shared_libs: [
+        "libbase",
+        "libbinder_ndk",
+        "liblog",
+        "vendor.unisoc.hardware.radio-V1-ndk",
+        "vendor.unisoc.hardware.radio.data-V1-ndk",
+        "vendor.unisoc.hardware.radio.ims-V1-ndk",
+        "vendor.unisoc.hardware.radio.lite-V1-ndk",
+        "vendor.unisoc.hardware.radio.messaging-V1-ndk",
+        "vendor.unisoc.hardware.radio.modem-V1-ndk",
+        "vendor.unisoc.hardware.radio.network-V1-ndk",
+        "vendor.unisoc.hardware.radio.sim-V1-ndk",
+        "vendor.unisoc.hardware.radio.voice-V1-ndk",
+    ],
+}

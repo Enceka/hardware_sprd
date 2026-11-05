@@ -1,0 +1,4 @@
+service vendor.sprd.aidl-stub /vendor/bin/hw/vendor.sprd.hardware-aidl-service.stub
+    class hal
+    user system
+    group system

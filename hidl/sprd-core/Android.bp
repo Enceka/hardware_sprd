@@ -1,0 +1,39 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+cc_binary {
+    name: "vendor.sprd.hardware-service.stub",
+    defaults: ["hidl_defaults"],
+    init_rc: ["vendor.sprd.hardware-service.stub.rc"],
+    vintf_fragments: ["vendor.sprd.hardware-service.stub.xml"],
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: ["service.cpp"],
+    shared_libs: [
+        "libbase",
+        "libhidlbase",
+        "liblog",
+        "libutils",
+        "vendor.sprd.hardware.connmgr@1.0",
+        "vendor.sprd.hardware.cplog_svc@1.0",
+        "vendor.sprd.hardware.face@1.0",
+        "vendor.sprd.hardware.gnss@1.0",
+        "vendor.sprd.hardware.hdcp@1.0",
+        "vendor.sprd.hardware.ifaa@1.0",
+        "vendor.sprd.hardware.log@1.0",
+        "vendor.sprd.hardware.network@1.0",
+        "vendor.sprd.hardware.power@4.0",
+        "vendor.sprd.hardware.radio.ims@1.1",
+        "vendor.sprd.hardware.radio.lite@1.0",
+        "vendor.sprd.hardware.radio@1.1",
+        "vendor.sprd.hardware.thermal@1.0",
+        "vendor.sprd.hardware.thermal@2.0",
+        "vendor.sprd.hardware.trusty@1.0",
+        "vendor.sprd.hardware.tui@1.0",
+        "vendor.sprd.hardware.vdsp@1.0",
+        "vendor.sprd.hardware.wcn@1.0",
+        "vendor.sprd.hardware.wifi.hostapd@1.1",
+    ],
+}
