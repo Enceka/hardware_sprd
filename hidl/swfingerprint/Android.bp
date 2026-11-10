@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// Experimental empty-interface services; deliberately outside the product namespace.
+soong_namespace {
+    imports: ["hardware/sprd/interfaces"],
+}
+
 cc_binary {
     name: "vendor.sw.swfingerprint@1.0-service.stub",
     defaults: ["hidl_defaults"],

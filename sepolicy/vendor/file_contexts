@@ -1,0 +1,8 @@
+/vendor/bin/hw/android\.hardware\.lights-service\.sprd    u:object_r:hal_light_default_exec:s0
+/vendor/bin/hw/android\.hardware\.memtrack-service\.sprd  u:object_r:hal_memtrack_default_exec:s0
+/vendor/bin/hw/vendor\.unisoc\.hardware\.power-service   u:object_r:hal_power_default_exec:s0
+/vendor/bin/hw/vendor\.sprd\.hardware\.boot@1\.2-service  u:object_r:hal_bootctl_default_exec:s0
+/vendor/bin/hw/vendor\.sprd\.hardware\.enhance-service    u:object_r:vendor_hal_sprd_enhance_default_exec:s0
+/vendor/bin/yloglite                                     u:object_r:vendor_yloglite_exec:s0
+/data/vendor/ylog(/.*)?                                  u:object_r:vendor_yloglite_data_file:s0
+/vendor/bin/init\.insmod\.sh                             u:object_r:vendor_sprd_modprobe_exec:s0

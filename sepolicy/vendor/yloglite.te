@@ -1,0 +1,12 @@
+# init requires a domain transition even during permissive bring-up.
+type vendor_yloglite, domain;
+type vendor_yloglite_exec, exec_type, vendor_file_type, file_type;
+type vendor_yloglite_data_file, file_type, data_file_type;
+init_daemon_domain(vendor_yloglite)
+
+allow vendor_yloglite vendor_yloglite_data_file:dir create_dir_perms;
+allow vendor_yloglite vendor_yloglite_data_file:file create_file_perms;
+allow vendor_yloglite kmsg_device:chr_file r_file_perms;
+allow vendor_yloglite kernel:system syslog_read;
+# Read the logd socket directly; vendor daemons cannot execute system logcat.
+unix_socket_connect(vendor_yloglite, logdr, logd)

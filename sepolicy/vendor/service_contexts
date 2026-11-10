@@ -1,0 +1,2 @@
+vendor.unisoc.hardware.power.IVendorPower/default u:object_r:hal_power_service:s0
+vendor.sprd.hardware.enhance.IEnhance/default      u:object_r:vendor_hal_sprd_enhance_service:s0
