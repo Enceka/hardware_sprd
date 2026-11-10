@@ -1,0 +1,4 @@
+service vendor.memtrack-sprd /vendor/bin/hw/android.hardware.memtrack-service.sprd
+    class hal
+    user nobody
+    group system

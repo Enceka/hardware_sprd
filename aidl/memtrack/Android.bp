@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: Apache-2.0
+filegroup {
+    name: "sprd_mali_memory_sources",
+    srcs: ["MaliMemory.cpp"],
+}
+
+cc_binary {
+    name: "android.hardware.memtrack-service.sprd",
+    vendor: true,
+    relative_install_path: "hw",
+    init_rc: ["memtrack-sprd.rc"],
+    vintf_fragments: ["memtrack-sprd.xml"],
+    srcs: ["Memtrack.cpp", "MaliMemory.cpp", "main.cpp"],
+    shared_libs: ["libbase", "libbinder_ndk", "android.hardware.memtrack-V1-ndk"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}

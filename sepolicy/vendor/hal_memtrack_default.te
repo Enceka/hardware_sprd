@@ -1,0 +1,12 @@
+# Android 12+ launch devices prohibit HAL access to debugfs. Keep that platform
+# restriction; on those devices getMemory returns unsupported in enforcing mode.
+# Older devices can use the stock UNISOC kbase accounting interface.
+no_debugfs_restriction(`
+    allow hal_memtrack_default debugfs:dir search;
+    allow hal_memtrack_default vendor_sprd_debugfs_mali:dir r_dir_perms;
+    allow hal_memtrack_default vendor_sprd_debugfs_mali:file r_file_perms;
+')
+allow hal_memtrack_default sysfs:dir r_dir_perms;
+allow hal_memtrack_default sysfs:lnk_file read;
+allow hal_memtrack_default sysfs_gpu:dir r_dir_perms;
+allow hal_memtrack_default sysfs_gpu:lnk_file read;

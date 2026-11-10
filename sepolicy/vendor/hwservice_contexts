@@ -1,0 +1,1 @@
+vendor.sprd.hardware.boot::IBootControl u:object_r:hal_bootctl_hwservice:s0

@@ -11,9 +11,11 @@ The inventory below is derived from the RongYue E5 stock image:
   * the vendor.sprd.hardware.* / vendor.unisoc.hardware.* libraries in the
     vendor and system_ext partitions.
 
-Run from anywhere:  python3 tools/generate_hal_stubs.py
+Run from anywhere with a new scratch directory:
+  python3 tools/generate_hal_stubs.py --output /tmp/sprd-hal-skeleton
 """
 
+import argparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -416,7 +418,7 @@ def gen_aidl_service(svc):
 
 def gen_skeleton():
     write("Android.bp", LICENSE_C + "\nsoong_namespace {\n}\n")
-    write("Android.mk", LICENSE_C + "\n"
+    write("Android.mk", "# SPDX-License-Identifier: Apache-2.0\n\n"
           "ifeq ($(BOARD_HAS_SPRD_HARDWARE),true)\n"
           "include $(call all-subdir-makefiles)\n"
           "endif\n")
@@ -428,7 +430,7 @@ def gen_skeleton():
           "# Generate blueprint/makefiles for the vendor HALs.\n"
           'set -e\n'
           'cd "$(dirname "$0")/.."\n'
-          'exec python3 tools/generate_hal_stubs.py\n')
+          'exec python3 tools/generate_hal_stubs.py "$@"\n')
     write("tools/dump_hal_api.sh", r'''#!/bin/sh
 #
 # SPDX-FileCopyrightText: The LineageOS Project
@@ -532,6 +534,16 @@ def gen_readme():
 
 
 def main():
+    global ROOT
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, required=True,
+                        help="scratch output directory (must not be hardware/sprd)")
+    args = parser.parse_args()
+    if args.output.resolve().is_relative_to(ROOT):
+        parser.error("refusing to overwrite maintained HALs and build files")
+    if args.output.exists() and (not args.output.is_dir() or any(args.output.iterdir())):
+        parser.error("output must be a new or empty scratch directory")
+    ROOT = args.output.resolve()
     gen_skeleton()
     gen_hidl_interfaces()
     gen_aidl_interfaces()
