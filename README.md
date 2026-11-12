@@ -3,7 +3,7 @@
 Android 13 / LineageOS 20 bring-up, initially for RongYue E5 (UMS9621).
 The layout follows `hardware/mediatek`: standard AIDL HAL implementations,
 init/VINTF fragments and a common product include. The standard services below
-are wired into both `lineage_e5` and `lineage_e5_min`.
+are wired into `lineage_e5`.
 
 ## Implemented
 
@@ -66,7 +66,7 @@ From the Android source root:
 
 ```sh
 source build/envsetup.sh
-lunch lineage_e5_min-eng
+lunch lineage_e5-eng
 m -j2 android.hardware.lights-service.sprd android.hardware.memtrack-service.sprd \
     libdrm.vendor sprd_hardware_test selinux_policy
 out/host/linux-x86/nativetest64/sprd_hardware_test/sprd_hardware_test
