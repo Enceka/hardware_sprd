@@ -20,8 +20,7 @@ size, and global usage is taken from the device total without counting contexts
 again. CPU Mali mappings use `VM_PFNMAP` and are not accounted by smaps.
 This reader is specific to the inspected UNISOC format, not every Mali driver.
 
-The existing [private HAL inventory](docs/private-hal-inventory.md) and empty
-HIDL/AIDL templates are retained in separate Soong namespaces. They must **not**
+The existing empty HIDL/AIDL templates are retained in separate Soong namespaces. They must **not**
 replace stock libraries: method names alone do not establish transaction codes,
 parcel layout, inheritance or hashes. Power/enhance, boot control, radio, TEE and
 other vendor-private implementations remain stock.
