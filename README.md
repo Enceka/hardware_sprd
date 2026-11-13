@@ -10,11 +10,14 @@ are wired into `lineage_e5`.
 | Module | Behavior | Evidence / limits |
 | --- | --- | --- |
 | `android.hardware.lights-service.sprd` | Panel brightness and optional keyboard backlight; RGB luminance scaled to `max_brightness` | Stock lights binary paths; no RGB notification LED or vendor power/touch side effects |
-| `android.hardware.memtrack-service.sprd` | Mali GPU-private pages by process or globally; discovers kernel GPU device name | UMS9158 kbase `gpu_memory` format; no DMA-BUF PSS; returns unsupported if debugfs is unavailable |
+| `android.hardware.memtrack-service.sprd` | Mali GPU-private pages by process or globally; discovers kernel GPU device name | Source kbase `gpu_memory` sysfs interface; no DMA-BUF PSS; returns unsupported when accounting is unavailable |
 | `libdrm.vendor` | Explicitly installs both vendor library ABIs for stock HWC/mapper | ELF blobs copied by Make do not pull in Soong dependencies |
 
-Memtrack matches the process against **tgid**: in this kernel the debugfs field
-labelled `tid` is `kctx->tgid`, while the field labelled `pid` is a thread ID.
+Memtrack reads `/sys/class/misc/mali0/device/gpu_memory` and matches the process
+against **tgid**: the compatible record field labelled `tid` is `kctx->tgid`,
+while the field labelled `pid` is a thread ID. Contexts use numeric indices;
+the sysfs interface does not expose kernel addresses. The kernel returns an
+error rather than truncating a report that exceeds one sysfs page.
 All matching contexts are summed, pages are converted using the runtime page
 size, and global usage is taken from the device total without counting contexts
 again. CPU Mali mappings use `VM_PFNMAP` and are not accounted by smaps.
@@ -37,7 +40,8 @@ domain and can set its module-ready property.
 ```make
 # BoardConfig.mk
 BOARD_HAS_SPRD_HARDWARE := true
-BOARD_VENDOR_SEPOLICY_DIRS += hardware/sprd/sepolicy/vendor
+SPRD_SEPOLICY_PLATFORM := ums9621
+include device/sprd/sepolicy_vndr/SEPolicy.mk
 
 # device.mk
 $(call inherit-product, hardware/sprd/sprd-common.mk)
@@ -48,15 +52,15 @@ blob list, then regenerate the vendor makefile. Their standard HAL declarations
 now come from source `vintf_fragments`; do not also declare them in the device
 manifest. E5 already applies this replacement. SELinux entrypoint labels are
 included; sysfs labels on another board must match its actual device paths.
+The older `hardware/sprd/sepolicy/vendor` subset can be used separately for
+minimal bring-up; do not include it together with `device/sprd/sepolicy_vndr`.
 `BOARD_HAS_SPRD_HARDWARE` gates Make subdirectories only; Soong module selection
 is controlled by namespaces and `PRODUCT_PACKAGES`.
 
 Lights does not force `bl_power` or enable a DRM connector: HWC/kernel still
-control panel power. Memtrack does not mount debugfs or require it for boot.
-On Android 12+ launch devices (including E5), platform policy prohibits HAL
-debugfs access in enforcing mode. The reader can be used during permissive
-bring-up; production GL accounting needs a permitted kernel accounting API.
-The supplied policy does not relax the platform restriction.
+control panel power. Memtrack uses a read-only, separately labelled sysfs
+attribute. Brightness control and nonzero GPU accounting have been verified
+with SELinux enforcing on Qogirn6L. HAL debugfs access remains prohibited.
 Neither service claims to fix bootloader, kernel or first-stage init failures.
 
 ## Verification
