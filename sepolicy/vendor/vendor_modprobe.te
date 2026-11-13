@@ -1,4 +1,4 @@
-# E5 starts the stock shell wrapper as an init service; it needs a transition
+# SPRD starts the stock shell wrapper as an init service; it needs a transition
 # just like a direct /vendor/bin/modprobe invocation does.
 type vendor_sprd_modprobe_exec, exec_type, vendor_file_type, file_type;
 domain_auto_trans(init, vendor_sprd_modprobe_exec, vendor_modprobe)

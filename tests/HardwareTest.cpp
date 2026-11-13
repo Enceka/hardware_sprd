@@ -29,6 +29,12 @@ TEST(MaliMemory, GlobalIncludesPoolWithoutDoubleCountingContexts) {
     EXPECT_EQ(memory(kMemory, 0, 16384), 25 * 16384);
 }
 
+TEST(MaliMemory, ParsesSysfsCountersWithoutKernelAddresses) {
+    EXPECT_EQ(memory("mali0 20\nkctx-0 5 [pid:11,tid:10]\n"
+                     "kctx-1 3 [pid:12,tid:10]\n", 10), 8 * 4096);
+    EXPECT_EQ(memory("mali0 20\nkctx-0 5 [pid:11,tid:10]\n", 0), 20 * 4096);
+}
+
 TEST(MaliMemory, RejectsUnreadableMalformedAndOverflowingInput) {
     EXPECT_FALSE(memory("", 0));
     EXPECT_FALSE(memory("mali0 -1\n", 0));

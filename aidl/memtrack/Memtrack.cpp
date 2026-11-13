@@ -32,7 +32,7 @@ ndk::ScopedAStatus Memtrack::getMemory(int32_t pid, MemtrackType type,
             return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
     }
 
-    std::ifstream input("/sys/kernel/debug/mali0/gpu_memory");
+    std::ifstream input("/sys/class/misc/mali0/device/gpu_memory");
     if (!input.is_open()) {
         return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
     }

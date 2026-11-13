@@ -1,1 +1,1 @@
-type vendor_sprd_debugfs_mali, debugfs_type, fs_type;
+type vendor_sprd_sysfs_gpu_memory, fs_type, sysfs_type;
