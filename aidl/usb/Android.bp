@@ -1,0 +1,23 @@
+cc_binary {
+    name: "android.hardware.usb-service.sprd",
+    vendor: true,
+    relative_install_path: "hw",
+    init_rc: ["usb-sprd.rc"],
+    vintf_fragments: ["usb-sprd.xml"],
+    srcs: ["main.cpp", "Usb.cpp", "Nodes.cpp"],
+    shared_libs: [
+        "android.hardware.usb-V1-ndk",
+        "libbase",
+        "libbinder_ndk",
+        "libcutils",
+        "liblog",
+    ],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}
+
+cc_test_host {
+    name: "sprd_usb_nodes_test",
+    srcs: ["NodesTest.cpp", "Nodes.cpp"],
+    shared_libs: ["libbase"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}

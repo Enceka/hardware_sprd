@@ -1,0 +1,13 @@
+service vendor.usb_default /vendor/bin/hw/android.hardware.usb-service.sprd
+    class hal
+    user system
+    group system
+    interface aidl android.hardware.usb.IUsb/default
+
+on boot
+    chown root system /sys/class/usb_notify/usb_control/usb_data_enabled
+    chmod 0664 /sys/class/usb_notify/usb_control/usb_data_enabled
+
+on property:init.svc.vendor.usb_default=running
+    chown root system /sys/class/usb_notify/usb_control/usb_data_enabled
+    chmod 0664 /sys/class/usb_notify/usb_control/usb_data_enabled
