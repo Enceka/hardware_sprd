@@ -54,13 +54,45 @@ From the Android source root:
 ```sh
 g++ -std=c++17 -Wall -Wextra -Werror -pthread -Iexternal/tinyxml2 \
   hardware/sprd/aidl/power/tests/SceneManagerTest.cpp \
-  hardware/sprd/aidl/power/SceneManager.cpp external/tinyxml2/tinyxml2.cpp \
+  hardware/sprd/aidl/power/SceneManager.cpp hardware/sprd/aidl/power/DdrVote.cpp \
+  external/tinyxml2/tinyxml2.cpp \
   -o /tmp/sprd-scene-test
 /tmp/sprd-scene-test hardware/sprd/aidl/power/tests/data
 /tmp/sprd-scene-test vendor/rongyue/e5/proprietary/vendor/etc --load
+```
+
+Compare the recovered wire ABI with the stock proxy:
+
+```sh
+python3 hardware/sprd/aidl/power/tests/check_stock_abi.py
 ```
 
 Build with m android.hardware.power-service.sprd. On device, verify both services
 register, stock camera clients can acquire/release scenes, killing a client
 releases its leases, standard/private overlap restores correctly, timeout and
 screen-off cancellation work, and there are no SELinux denials.
+
+## DDR vote protocol
+
+DDR max/min resolve against ddrinfo_freq_table in its native units. Invalid,
+zero and 0xff entries are excluded. All standard/private scene requests share
+one aggregate boost reference at their maximum requested DDR frequency. The
+first request writes `1 <frequency>` to scene_boost_dfs, intermediate requests
+with the same effective frequency cause no write, and the final release writes
+`0 <frequency>`. Changing frequency releases the previous reference before
+acquiring the new one. Failed replacements restore the previous vote when
+possible; failed I/O is retried every 100 ms. User-space write success follows
+the kernel sysfs contract; this driver logs firmware vote failures internally.
+
+The regular `backdoor` control is restored to its XML default 0 when its last
+request ends. A kernel boost vote has no process identity, so unclean service
+termination must be included in device restart testing.
+
+Additional host test:
+
+```sh
+g++ -std=c++17 -Wall -Wextra -Werror \
+  hardware/sprd/aidl/power/tests/DdrVoteTest.cpp \
+  hardware/sprd/aidl/power/DdrVote.cpp -o /tmp/sprd-ddr-test
+/tmp/sprd-ddr-test
+```

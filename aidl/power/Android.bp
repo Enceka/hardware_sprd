@@ -5,7 +5,7 @@ cc_binary {
     name: "android.hardware.power-service.sprd",
     vendor: true,
     relative_install_path: "hw",
-    srcs: ["Power.cpp", "SceneManager.cpp", "VendorPower.cpp", "service.cpp"],
+    srcs: ["Power.cpp", "SceneManager.cpp", "DdrVote.cpp", "VendorPower.cpp", "service.cpp"],
     shared_libs: ["android.hardware.power-V3-ndk", "libbase", "libbinder_ndk", "libtinyxml2", "libutils", "sprd-power-compat-V1-ndk"],
     init_rc: ["power.rc"],
     vintf_fragments: ["power.xml"],

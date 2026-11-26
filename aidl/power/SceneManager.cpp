@@ -85,6 +85,7 @@ bool SceneManager::Load(const std::string& directory) {
         if (!supported) continue;
         mResourceNames[Attr(e, "name")] = node.path;
         mNodes[node.path] = node;
+        if (node.ddr) mDdrVotes[node.path] = std::make_unique<DdrVote>(node.path, mRead, mWrite);
     }
     for (auto e = root->FirstChildElement("subsys"); e; e = e->NextSiblingElement("subsys")) {
         auto name = Attr(e, "name");
@@ -284,25 +285,60 @@ bool SceneManager::Vip(const std::string& type, int pid, int level) {
                   std::to_string(pid) + " " + std::to_string(level));
 }
 void SceneManager::ApplyLocked() {
+    mRetry = false;
     Actions targets;
+    std::map<std::string, uint32_t> ddrTargets;
     for (const auto& [key, request] : mRequests) {
         for (const auto& [path, value] : mScenes.at(request.scene)) {
+            if (mNodes.at(path).ddr) {
+                auto frequency = mDdrVotes.at(path)->Resolve(value);
+                if (!frequency) mRetry = true;
+                ddrTargets[path] = std::max(ddrTargets[path], frequency);
+                continue;
+            }
             auto it = targets.find(path);
             if (it == targets.end() ||
                 (mNodes.at(path).minimum ? Less(value, it->second) : Less(it->second, value)))
                 targets[path] = value;
         }
     }
+    for (auto& [path, vote] : mDdrVotes) {
+        if (!vote->Update(ddrTargets[path])) mRetry = true;
+    }
+    struct Pending {
+        Node* node;
+        std::string value;
+        int priority;
+    };
+    std::vector<Pending> pending;
     for (auto& [path, node] : mNodes) {
-        if (node.ddr) continue;  // DDR is handled by its vote protocol, not ordinary file writes.
+        if (node.ddr) continue;
         auto it = targets.find(path);
         if (!node.captured && it != targets.end()) {
-            if (!node.configuredDefault && !mRead(path, &node.baseline)) continue;
+            if (!node.configuredDefault && !mRead(path, &node.baseline)) {
+                mRetry = true;
+                continue;
+            }
             node.captured = true;
         }
         if (!node.captured) continue;
-        const auto& desired = it == targets.end() ? node.baseline : it->second;
-        if (desired != node.applied && mWrite(path, desired)) node.applied = desired;
+        auto desired = it == targets.end() ? node.baseline : it->second;
+        if (desired == node.applied) continue;
+        // Lower a CPU minimum before lowering its maximum; raise the maximum
+        // before raising the minimum, so cpufreq policy verification cannot
+        // clamp the final requested limit against a stale opposing constraint.
+        int priority = 1;
+        if (path.size() >= 16 && path.compare(path.size() - 16, 16, "scaling_min_freq") == 0)
+            priority = Less(desired, node.applied.empty() ? node.baseline : node.applied) ? 0 : 2;
+        pending.push_back({&node, std::move(desired), priority});
+    }
+    std::stable_sort(pending.begin(), pending.end(),
+                     [](const Pending& a, const Pending& b) { return a.priority < b.priority; });
+    for (auto& update : pending) {
+        if (mWrite(update.node->path, update.value))
+            update.node->applied = update.value;
+        else
+            mRetry = true;
     }
 }
 void SceneManager::Loop() {
@@ -320,7 +356,8 @@ void SceneManager::Loop() {
                 ++it;
             }
         }
-        if (changed) ApplyLocked();
+        if (changed || mRetry) ApplyLocked();
+        if (mRetry) deadline = std::min(deadline, steady_clock::now() + milliseconds(100));
         if (deadline == steady_clock::time_point::max())
             mCv.wait(lock);
         else
@@ -334,6 +371,8 @@ void SceneManager::DumpToFd(int fd) {
     for (const auto& [key, request] : mRequests)
         dprintf(fd, "%s scene=%s references=%u\n", key.first.c_str(), request.scene.c_str(),
                 request.count);
+    for (const auto& [path, vote] : mDdrVotes)
+        dprintf(fd, "DDR %s held=%u\n", path.c_str(), vote->Current());
     for (const auto& [path, node] : mNodes)
         if (node.captured)
             dprintf(fd, "%s applied=%s baseline=%s\n", path.c_str(), node.applied.c_str(),

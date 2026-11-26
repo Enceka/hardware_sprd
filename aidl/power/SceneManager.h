@@ -6,11 +6,14 @@
 #include <condition_variable>
 #include <functional>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <string>
 #include <thread>
 #include <vector>
+
+#include "DdrVote.h"
 
 namespace sprd::power {
 class SceneManager {
@@ -64,9 +67,10 @@ class SceneManager {
     Write mWrite;
     mutable std::mutex mMutex;
     std::condition_variable mCv;
-    bool mStop = false, mEnabled = true;
+    bool mStop = false, mEnabled = true, mRetry = false;
     std::thread mThread;
     std::map<std::string, Node> mNodes;
+    std::map<std::string, std::unique_ptr<DdrVote>> mDdrVotes;
     std::map<std::string, std::string> mResourceNames;
     std::map<std::string, Actions> mSubsystems;
     std::map<std::string, Actions> mScenes;
