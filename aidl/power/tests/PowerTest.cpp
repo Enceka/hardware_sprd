@@ -43,3 +43,26 @@ TEST(DoubleTapWake, WriteFailureReturnsIllegalState) {
     auto power = ndk::SharedRefBase::make<Power>(nullptr, directory.path);
     EXPECT_EQ(EX_ILLEGAL_STATE, power->setMode(Mode::DOUBLE_TAP_TO_WAKE, true).getExceptionCode());
 }
+
+TEST(Interactive, NodeWritesDoNotRequireSceneActions) {
+    TemporaryDir directory;
+    const std::string path = std::string(directory.path) + "/interactive";
+    ASSERT_TRUE(::android::base::WriteStringToFile("1\n", path));
+    auto scenes = std::make_shared<::sprd::power::SceneManager>(
+        [](const std::string&, std::string*) { return false; },
+        [](const std::string&, const std::string&) { return false; });
+    auto power = ndk::SharedRefBase::make<Power>(scenes, "", path);
+    ASSERT_TRUE(power->setMode(Mode::INTERACTIVE, false).isOk());
+    std::string value;
+    ASSERT_TRUE(::android::base::ReadFileToString(path, &value));
+    EXPECT_EQ("0\n", value);
+    ASSERT_TRUE(power->setMode(Mode::INTERACTIVE, true).isOk());
+    ASSERT_TRUE(::android::base::ReadFileToString(path, &value));
+    EXPECT_EQ("1\n", value);
+}
+
+TEST(Interactive, WriteFailureReturnsIllegalState) {
+    TemporaryDir directory;
+    auto power = ndk::SharedRefBase::make<Power>(nullptr, "", directory.path);
+    EXPECT_EQ(EX_ILLEGAL_STATE, power->setMode(Mode::INTERACTIVE, false).getExceptionCode());
+}

@@ -23,6 +23,11 @@ ndk::ScopedAStatus Power::setMode(Mode type, bool enabled) {
     }
     const auto hint = toString(type);
     if (type == Mode::INTERACTIVE) {
+        if (!mInteractiveNode.empty() &&
+            !::android::base::WriteStringToFile(enabled ? "1\n" : "0\n", mInteractiveNode)) {
+            PLOG(ERROR) << "Failed to set touchscreen interactive state";
+            return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_STATE);
+        }
         mInteractive = enabled;
         if (!enabled) {
             for (auto boost : ndk::enum_range<Boost>()) mHints->EndHint(toString(boost));

@@ -11,8 +11,11 @@
 namespace aidl::android::hardware::power::sprd {
 class Power final : public BnPower {
    public:
-    Power(std::shared_ptr<::sprd::power::SceneManager> hints, std::string doubleTapWakeNode)
-        : mHints(std::move(hints)), mDoubleTapWakeNode(std::move(doubleTapWakeNode)) {}
+    Power(std::shared_ptr<::sprd::power::SceneManager> hints, std::string doubleTapWakeNode,
+          std::string interactiveNode = "")
+        : mHints(std::move(hints)),
+          mDoubleTapWakeNode(std::move(doubleTapWakeNode)),
+          mInteractiveNode(std::move(interactiveNode)) {}
     ndk::ScopedAStatus setMode(Mode type, bool enabled) override;
     ndk::ScopedAStatus isModeSupported(Mode type, bool *supported) override;
     ndk::ScopedAStatus setBoost(Boost type, int32_t durationMs) override;
@@ -25,6 +28,7 @@ class Power final : public BnPower {
    private:
     std::shared_ptr<::sprd::power::SceneManager> mHints;
     const std::string mDoubleTapWakeNode;
+    const std::string mInteractiveNode;
     std::mutex mMutex;
     bool mInteractive = true;
     bool mLowPower = false;

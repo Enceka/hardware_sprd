@@ -26,7 +26,8 @@ int main(int argc, char** argv) {
     CHECK(hints->Load(config)) << "Invalid Power HAL configuration: " << config;
     ABinderProcess_setThreadPoolMaxThreadCount(0);
     auto power = ndk::SharedRefBase::make<aidl::android::hardware::power::sprd::Power>(
-        hints, ::android::base::GetProperty("ro.vendor.sprd.power.dt2w_node", ""));
+        hints, ::android::base::GetProperty("ro.vendor.sprd.power.dt2w_node", ""),
+        ::android::base::GetProperty("ro.vendor.sprd.power.interactive_node", ""));
     const std::string instance = std::string(power->descriptor) + "/default";
     CHECK_EQ(AServiceManager_addService(power->asBinder().get(), instance.c_str()), STATUS_OK);
     auto vendorPower = ndk::SharedRefBase::make<::sprd::power::VendorPower>(hints);
