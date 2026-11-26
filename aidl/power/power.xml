@@ -4,4 +4,9 @@
         <version>3</version>
         <fqname>IPower/default</fqname>
     </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.power</name>
+        <version>1</version>
+        <fqname>IVendorPower/default</fqname>
+    </hal>
 </manifest>

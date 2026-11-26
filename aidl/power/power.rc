@@ -3,3 +3,4 @@ service vendor.power-sprd /vendor/bin/hw/android.hardware.power-service.sprd
     user root
     group system
     interface aidl android.hardware.power.IPower/default
+    interface aidl vendor.unisoc.hardware.power.IVendorPower/default

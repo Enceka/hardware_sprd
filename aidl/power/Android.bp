@@ -5,9 +5,24 @@ cc_binary {
     name: "android.hardware.power-service.sprd",
     vendor: true,
     relative_install_path: "hw",
-    srcs: ["Power.cpp", "service.cpp"],
-    shared_libs: ["android.hardware.power-V3-ndk", "libbase", "libbinder_ndk", "libperfmgr", "libutils"],
+    srcs: ["Power.cpp", "SceneManager.cpp", "VendorPower.cpp", "service.cpp"],
+    shared_libs: ["android.hardware.power-V3-ndk", "libbase", "libbinder_ndk", "libtinyxml2", "libutils", "sprd-power-compat-V1-ndk"],
     init_rc: ["power.rc"],
     vintf_fragments: ["power.xml"],
     cflags: ["-Wall", "-Wextra", "-Werror"],
+}
+
+// Separate module name preserves the stock library used by proprietary clients.
+aidl_interface {
+    name: "sprd-power-compat",
+    srcs: ["compat/vendor/unisoc/hardware/power/IVendorPower.aidl"],
+    local_include_dir: "compat",
+    stability: "vintf",
+    vendor_available: true,
+    owner: "sprd",
+    backend: {
+        cpp: { enabled: false },
+        java: { enabled: false },
+        ndk: { enabled: true },
+    },
 }

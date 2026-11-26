@@ -1,0 +1,5 @@
+<resources>
+<file path="/fake/cpu" file="min" name="cpu_min"><attr name="comp_func" value="common_comp_ascend_order"/><attr name="set_func" value="common_set"/></file>
+<file path="/fake/cpu" file="max" name="cpu_max"><attr name="comp_func" value="common_comp_descend_order"/><attr name="set_func" value="common_set"/></file>
+<file path="/fake/ddr" file="scene_boost_dfs" name="ddr"><attr name="set_func" value="devfreq_ddr_set"/></file>
+</resources>

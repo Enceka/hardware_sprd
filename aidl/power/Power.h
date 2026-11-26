@@ -3,15 +3,15 @@
 
 #pragma once
 #include <aidl/android/hardware/power/BnPower.h>
-#include <perfmgr/HintManager.h>
 
 #include <mutex>
+
+#include "SceneManager.h"
 
 namespace aidl::android::hardware::power::sprd {
 class Power final : public BnPower {
    public:
-    explicit Power(std::unique_ptr<::android::perfmgr::HintManager> hints)
-        : mHints(std::move(hints)) {}
+    explicit Power(std::shared_ptr<::sprd::power::SceneManager> hints) : mHints(std::move(hints)) {}
     ndk::ScopedAStatus setMode(Mode type, bool enabled) override;
     ndk::ScopedAStatus isModeSupported(Mode type, bool *supported) override;
     ndk::ScopedAStatus setBoost(Boost type, int32_t durationMs) override;
@@ -22,7 +22,7 @@ class Power final : public BnPower {
     binder_status_t dump(int fd, const char **args, uint32_t numArgs) override;
 
    private:
-    std::unique_ptr<::android::perfmgr::HintManager> mHints;
+    std::shared_ptr<::sprd::power::SceneManager> mHints;
     std::mutex mMutex;
     bool mInteractive = true;
     bool mLowPower = false;

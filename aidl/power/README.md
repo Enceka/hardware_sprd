@@ -1,51 +1,66 @@
 # SPRD AIDL Power HAL
 
-Source implementation of Android Power AIDL v3, backed by the existing open
-source libperfmgr. There is no dependency on power.sprd.so or libpowerhal_cli.
-Install android.hardware.power-service.sprd and /vendor/etc/powerhint.json.
-An alternative config path may be supplied as the first service argument.
+The source service provides Android Power AIDL v3 and the nine-method Unisoc
+IVendorPower V1 interface. Both use a shared XML scene manager so private camera
+leases and standard framework hints arbitrate the same nodes. No power.sprd.so
+or libpowerhal_cli is loaded by the service. Existing proprietary client libraries
+remain unchanged.
 
-The JSON uses libperfmgr Nodes/Actions. Enum names map directly to hints;
-only configured hints are advertised. A zero boost duration uses the configured
-timeout, positive durations override it and negative durations cancel it.
-Mode actions use Duration 0 until disabled. INTERACTIVE gates transient boosts;
-screen off and LOW_POWER cancel all boosts and LAUNCH. If configured,
-DISPLAY_INACTIVE is enabled on screen off and released on screen on.
-ADPF sessions are reported as unsupported. dumpsys android.hardware.power.IPower/default
-shows libperfmgr request statistics.
+Install android.hardware.power-service.sprd and the OEM power_scene_config.xml,
+power_scene_id_define.txt, power_resource_file_info.xml. The first executable
+argument can override the default configuration directory /vendor/etc.
+E5_USE_SOURCE_POWER_HAL=true selects this service on E5 and removes the OEM
+service and its init rc. Keep the opt-in until on-device camera, performance,
+suspend and SELinux validation is complete.
 
-## E5 integration
+## Private wire interface
 
-Build with E5_USE_SOURCE_POWER_HAL=true to replace the stock executable and
-power.sprd module. The normal build retains the stock service pending private
-client migration: the OEM executable also owns vendor.unisoc.hardware.power
-IVendorPower. Its scene leases, registration and VIP task APIs are used by
-vendor clients and are not implemented by this standard service. Do not install
-both standard service providers together.
+The recovered AIDL in compat documents transaction IDs 1 through 9 in declaration
+order. Transactions 1-4, 8 and 9 are oneway. Metadata reports version 1 and OEM hash
+67a6288e6ac1c48aa2d0f1c882d182d74ad6f61b. The custom NDK dispatcher preserves
+that metadata and uses standard NDK parcel encoding. The separately named build
+interface prevents shadowing the stock library used by vendor clients.
+Evidence: E5 vendor.unisoc.hardware.power-V1-ndk.so exported Bp signatures and
+AIBinder_transact call sites; power.sprd.so power_impl dispatch, reg_scene,
+ctrl_power_hint, set_viptask; kernel drivers/unisoc_platform/sched/sysctl.c.
 
-E5 powerhint.json takes CPU boost frequencies from the stock
-power_scene_config.xml: policy0 2184000, policy6 2301000, policy7 2704000 kHz.
-Only minimum frequencies are raised; release writes 0 so cpufreq returns to
-its hardware minimum. The scheduler and thermal frequency ceilings remain active.
-Interaction lasts 150 ms by default, camera launch 1000 ms, and LAUNCH is held
-until disabled. These timeout values are initial tuning choices.
+Token/tag leases are reference counted. Binder death releases all leases for the
+token. Dynamic scenes take resource-name/value pairs, use the OEM five dynamic
+IDs, validate resource names against XML and enforce UID/tag ownership on
+unregister. Death also removes dynamic registrations for a tag after its last
+linked token dies. Disabling hints releases all outstanding requests. VIP types audio,
+ui, camera and animator write pid/level pairs to their WALT nodes.
 
-DDR max is intentionally omitted: the stock library converts the symbolic
-scene to the kernel's enable/frequency pair and balances its vote reference
-count. A persistent libperfmgr node needs that protocol handled explicitly.
-Low-power, sustained/fixed-performance and camera-streaming policies require
-separate device tuning before adding their hint actions.
+Resource defaults are captured before first use (or taken from explicit XML
+def_value attributes) and restored after the last request. Numeric resources
+and vectors use their configured ascending/descending arbitration. Standard
+modes are persistent until disabled; interaction defaults to 150 ms and camera
+launch/shot to 1000 ms. These timeouts are initial tuning choices. Screen off and
+LOW_POWER cancel transient standard hints. Empty XML policies are not advertised.
+ADPF sessions remain unsupported. dumpsys android.hardware.power.IPower/default
+shows active leases and applied/baseline node values.
 
-## Validation
+The engine supports common_set resources and expands subsystem configurations
+into their constituent controls. Other resource backends are rejected when a
+scene references them; missing/unreadable nodes are skipped without inventing
+baseline values. The standard adapter maps enum names to lowercase OEM scene
+names, with interaction_fling, camera_high_perf and screen_rotation aliases.
+Only the normal OEM policy group is loaded; E5's other groups are empty.
 
-Build: m android.hardware.power-service.sprd
-On a test device, enable the source flag and verify a single IPower/default,
-launch/interaction frequency increases, timeout restoration, overlapping
-launch/interaction release, screen-off cancellation, thermal limiting, and
-camera/video operation. Check logcat and SELinux denials. Private IVendorPower
-client migration is required before enabling the source service by default.
+## Host checks
 
-Reference architecture: https://github.com/XagaForge/android_hardware_mediatek
-(branch 16.2, hidl/mtkpower/1.2/default/MtkPower.cpp), which routes vendor hints
-to a standard AIDL Power service. This implementation uses the local AOSP v3
-interface and libperfmgr rather than MediaTek-specific interfaces.
+From the Android source root:
+
+```sh
+g++ -std=c++17 -Wall -Wextra -Werror -pthread -Iexternal/tinyxml2 \
+  hardware/sprd/aidl/power/tests/SceneManagerTest.cpp \
+  hardware/sprd/aidl/power/SceneManager.cpp external/tinyxml2/tinyxml2.cpp \
+  -o /tmp/sprd-scene-test
+/tmp/sprd-scene-test hardware/sprd/aidl/power/tests/data
+/tmp/sprd-scene-test vendor/rongyue/e5/proprietary/vendor/etc --load
+```
+
+Build with m android.hardware.power-service.sprd. On device, verify both services
+register, stock camera clients can acquire/release scenes, killing a client
+releases its leases, standard/private overlap restores correctly, timeout and
+screen-off cancellation work, and there are no SELinux denials.

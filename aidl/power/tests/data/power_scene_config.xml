@@ -1,0 +1,5 @@
+<power><mode name="normal">
+<scene name="launch"><set path="/fake/cpu" file="min" value="200"/></scene>
+<scene name="interaction_fling"><set path="/fake/cpu" file="min" value="150"/></scene>
+<scene name="ddr"><set path="/fake/ddr" file="scene_boost_dfs" value="max"/></scene>
+</mode></power>
