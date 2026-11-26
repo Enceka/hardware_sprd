@@ -6,3 +6,4 @@
 /vendor/bin/yloglite                                     u:object_r:vendor_yloglite_exec:s0
 /data/vendor/ylog(/.*)?                                  u:object_r:vendor_yloglite_data_file:s0
 /vendor/bin/init\.insmod\.sh                             u:object_r:vendor_sprd_modprobe_exec:s0
+/vendor/bin/hw/android\.hardware\.power-service\.sprd    u:object_r:hal_power_default_exec:s0

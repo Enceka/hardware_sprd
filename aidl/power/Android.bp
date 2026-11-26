@@ -1,0 +1,13 @@
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+
+cc_binary {
+    name: "android.hardware.power-service.sprd",
+    vendor: true,
+    relative_install_path: "hw",
+    srcs: ["Power.cpp", "service.cpp"],
+    shared_libs: ["android.hardware.power-V3-ndk", "libbase", "libbinder_ndk", "libperfmgr", "libutils"],
+    init_rc: ["power.rc"],
+    vintf_fragments: ["power.xml"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}
