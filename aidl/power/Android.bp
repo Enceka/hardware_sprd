@@ -26,3 +26,12 @@ aidl_interface {
         ndk: { enabled: true },
     },
 }
+
+cc_test {
+    name: "sprd_power_dt2w_test",
+    vendor: true,
+    srcs: ["tests/PowerTest.cpp", "Power.cpp", "SceneManager.cpp", "DdrVote.cpp"],
+    shared_libs: ["android.hardware.power-V3-ndk", "libbase", "libbinder_ndk", "libtinyxml2", "libutils"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+    test_suites: ["device-tests"],
+}

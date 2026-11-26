@@ -9,9 +9,8 @@ remain unchanged.
 Install android.hardware.power-service.sprd and the OEM power_scene_config.xml,
 power_scene_id_define.txt, power_resource_file_info.xml. The first executable
 argument can override the default configuration directory /vendor/etc.
-E5_USE_SOURCE_POWER_HAL=true selects this service on E5 and removes the OEM
-service and its init rc. Keep the opt-in until on-device camera, performance,
-suspend and SELinux validation is complete.
+E5 defaults to E5_USE_SOURCE_POWER_HAL=true, replacing the OEM service and its
+init rc. The source service owns both Power interfaces and dt2w.
 
 ## Private wire interface
 
@@ -96,3 +95,17 @@ g++ -std=c++17 -Wall -Wextra -Werror \
   hardware/sprd/aidl/power/DdrVote.cpp -o /tmp/sprd-ddr-test
 /tmp/sprd-ddr-test
 ```
+
+## Double-tap wake
+
+Set the read-only vendor property `ro.vendor.sprd.power.dt2w_node` to the
+kernel control path. An empty value disables support. DOUBLE_TAP_TO_WAKE is
+handled before scene lookup: support checks node existence; setMode writes
+`1\n` or `0\n` and returns EX_ILLEGAL_STATE on write failure. E5 uses
+/sys/module/tlsc6x/parameters/double_tap_wake with kernel-default mode 0644
+and hal_power_default write permission. Settings.Secure.DOUBLE_TAP_TO_WAKE
+flows through PowerManagerService; no E5Parts observer is involved.
+
+After installing the new product overlay, verify the actual APK and idmap and
+require `adb shell cmd overlay lookup android android:bool/config_supportDoubleTapWake`
+to return true before validating the LOS switch and driver value.

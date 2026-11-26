@@ -3,11 +3,24 @@
 
 #include "Power.h"
 
+#include <android-base/file.h>
+#include <android-base/logging.h>
+#include <unistd.h>
+
 #include <chrono>
 
 namespace aidl::android::hardware::power::sprd {
 ndk::ScopedAStatus Power::setMode(Mode type, bool enabled) {
     std::lock_guard lock(mMutex);
+    if (type == Mode::DOUBLE_TAP_TO_WAKE) {
+        if (mDoubleTapWakeNode.empty())
+            return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+        if (!::android::base::WriteStringToFile(enabled ? "1\n" : "0\n", mDoubleTapWakeNode)) {
+            PLOG(ERROR) << "Failed to set double-tap wake";
+            return ndk::ScopedAStatus::fromExceptionCode(EX_ILLEGAL_STATE);
+        }
+        return ndk::ScopedAStatus::ok();
+    }
     const auto hint = toString(type);
     if (type == Mode::INTERACTIVE) {
         mInteractive = enabled;
@@ -37,6 +50,10 @@ ndk::ScopedAStatus Power::setMode(Mode type, bool enabled) {
     return ndk::ScopedAStatus::ok();
 }
 ndk::ScopedAStatus Power::isModeSupported(Mode type, bool *supported) {
+    if (type == Mode::DOUBLE_TAP_TO_WAKE) {
+        *supported = !mDoubleTapWakeNode.empty() && access(mDoubleTapWakeNode.c_str(), F_OK) == 0;
+        return ndk::ScopedAStatus::ok();
+    }
     *supported = mHints->IsHintSupported(toString(type)) ||
                  (type == Mode::INTERACTIVE && mHints->IsHintSupported("INTERACTION"));
     return ndk::ScopedAStatus::ok();
