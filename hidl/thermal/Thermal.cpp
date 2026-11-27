@@ -31,6 +31,9 @@ using CoolingDevice10 = ::android::hardware::thermal::V1_0::CoolingDevice;
 using Temperature20 = ::android::hardware::thermal::V2_0::Temperature;
 using CoolingDevice20 = ::android::hardware::thermal::V2_0::CoolingDevice;
 
+// The class directory contains symlinks to these SELinux-labeled nodes.
+constexpr char kThermalPath[] = "/sys/devices/virtual/thermal";
+
 struct Zone {
     std::string path;
     std::string name;
@@ -69,7 +72,7 @@ TemperatureType GetType(const std::string& name) {
 
 std::vector<Zone> ReadZones() {
     std::vector<Zone> zones;
-    DIR* directory = opendir("/sys/class/thermal");
+    DIR* directory = opendir(kThermalPath);
     if (!directory) return zones;
 
     while (auto* entry = readdir(directory)) {
@@ -79,7 +82,7 @@ std::vector<Zone> ReadZones() {
                          [](unsigned char c) { return std::isdigit(c); }))
             continue;
 
-        const std::string path = "/sys/class/thermal/" + entryName;
+        const std::string path = std::string(kThermalPath) + "/" + entryName;
         std::string name;
         int64_t rawValue;
         if (!::android::base::ReadFileToString(path + "/type", &name) ||
